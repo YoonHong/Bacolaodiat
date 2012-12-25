@@ -7,10 +7,99 @@
 	<script src="js/jquery-1.8.2.min.js"></script>
 
 	<script>
+
+/****************************************************************
+			Event Object
+****************************************************************/
+		function Obj_Event(time, title, place, detail){
+			this.time = time;
+		    this.title = title;
+			this.place = place;
+			this.detail = detail;
+		}
+
+		Obj_Event.prototype = {
+			constructor: Obj_Event
+		};
+
+
+/****************************************************************
+			Place Object
+****************************************************************/
+		function Obj_Place(name, addr, latlng, path){
+			this.name = name;
+			this.addr = addr;
+			this.latlng = latlng;
+			this.path = path;
+		}
+
+		Obj_Place.prototype = {
+			constructor: Obj_Place
+		};
+
+
+/******************************************************************************************
+			Global Var
+*******************************************************************************************/
+		var gArr_place;
+		var gArr_event;
+		var gArr_weekDay, gArr_sWeekDay, gArr_month, gArr_sMonth;
+
+		// Index for Place
+		var gIdx_pNorthCapitol = 0;
+
+
+/******************************************************************************************
+			Init Functions
+*******************************************************************************************/
+		function init_vals(){
+			gArr_weekDay = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+			gArr_sWeekDay = [ "Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat" ];
+			gArr_month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Decmber"];
+			gArr_sMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		}
+
+
+		function init_Places ( ) {
+			gArr_place = [
+							new Obj_Place( "North Capitol Road", "North Capitol Road", "", null)							
+						]; 
+		}
+
+		function init_Events () {
+			gArr_event = [ ];
+
+			// 2012 Jan 20
+			var events = [
+							new Obj_Event ( "4:30 pm" , "Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
+							, new Obj_Event ( "6:00 pm" , "Cultural Show",  gIdx_pNorthCapitol , "A cutural SHow featuring Chinese songs and dances.")
+						];
+
+			gArr_event.push(events);
+
+		}
+
+
+/******************************************************************************************
+			
+*******************************************************************************************/
 		$(document).on('mobileinit', function() {
 			$.mobile.defaultPageTransition = "none";
+			
+		});
+
+
+		$(document).ready(function() {
+			init_vals();
+			init_Places();
+			init_Events();
 
 		});
+
+		$(document).on('pageinit', '#pSchedule', function() {
+			
+		});	
+
 	</script>
 
 	<script src="js/jquery.mobile-1.2.0.min.js"></script>
@@ -37,7 +126,9 @@
 
 
 	<div data-role="content">	
-		<p>Schedule</p>		
+		<p>Schedule</p>
+
+
 	</div><!-- /content -->
 
 </div><!-- /page -->
