@@ -31,6 +31,7 @@
 			this.addr = addr;
 			this.latlng = latlng;
 			this.path = path;
+			
 		}
 
 		Obj_Place.prototype = {
@@ -38,27 +39,87 @@
 		};
 
 
+/****************************************************************
+			Event UI Object
+****************************************************************/
+		function Obj_EventUI ( ) {
+
+			// Index for Current Date
+			this.idx = 0;
+			
+			// Event List
+			this.$eList = $("#pScheList");	
+			
+			// Date Choice Buttons
+			this.$lBtn = $("#pScheLBtn");
+			this.$cBtn = $("#pScheCBtn");
+			this.$rBtn = $("#pScheRBtn");
+
+			
+			this.init();
+
+		}
+
+		Obj_EventUI.prototype = {
+			constructor: Obj_EventUI
+
+			, init : function(){
+
+				this.showList();
+
+			} 
+
+			, showList : function(){
+
+				var evts = gArr_event[this.idx];
+				var evtsSize = evts.length;
+
+				var eDate = gArr_Date[this.idx];
+				var eDateTxt = gArr_sWeekDay[eDate.getDay()] + ", " + eDate.getDate() + " " + gArr_month[eDate.getMonth()] + ", " + eDate.getFullYear();
+
+				var txt = '<li data-role="list-divider"><h3 class="ui-li-heading">' + eDateTxt + '</h3><span class="ui-li-count">' + evtsSize + '</span></li>';
+
+				for( var i = 0; i < evtsSize; i++) {
+					var cEvt = evts[i];
+
+					var time_place = cEvt.time + " @ " + gArr_place[evts[i].place].name;
+
+					txt += '<li data-idx="' + this.idx + '" data-sidx="' + i + '" ><a>';
+					txt += '<img src="img/star.png" class="ui-li-icon" />';
+					txt += '<h3 class="ui-li-heading">' + cEvt.title + '</h3>';
+					txt += '<p class="ui-li-desc">' + time_place + '</p></a></li>';
+				}
+
+				this.$eList.html(txt).listview('refresh');
+			}
+		};
+
 /******************************************************************************************
 			Global Var
 *******************************************************************************************/
-		var gArr_place;
-		var gArr_event;
-		var gArr_weekDay, gArr_sWeekDay, gArr_month, gArr_sMonth;
+		// Arrays
+		var gArr_place;		// For Places
+		var gArr_Date;		// For Dates for Events
+		var gArr_event = [];		// For Events
+		
+		// Objects
+		var gObj_Event;		// Main Event Object
 
 		// Index for Place
 		var gIdx_pNorthCapitol = 0;
+
+		
+		// Init Day & Month Array
+		var gArr_weekDay = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
+		var gArr_sWeekDay = [ "Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat" ];
+		var	gArr_month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Decmber"];
+		var	gArr_sMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 
 
 /******************************************************************************************
 			Init Functions
 *******************************************************************************************/
-		function init_vals(){
-			gArr_weekDay = [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ];
-			gArr_sWeekDay = [ "Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat" ];
-			gArr_month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "Decmber"];
-			gArr_sMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-		}
-
 
 		function init_Places ( ) {
 			gArr_place = [
@@ -67,12 +128,30 @@
 		}
 
 		function init_Events () {
-			gArr_event = [ ];
-
-			// 2012 Jan 20
+			var year = 2013;
+			var month = 0;
+			gArr_Date = [ new Date(year, month, 20), new Date(year, month, 21), new Date(year, month, 22) ];
+	
+			// 2012 Jan 20  :  idx 0
 			var events = [
 							new Obj_Event ( "4:30 pm" , "Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
 							, new Obj_Event ( "6:00 pm" , "Cultural Show",  gIdx_pNorthCapitol , "A cutural SHow featuring Chinese songs and dances.")
+						];
+			gArr_event.push(events);
+
+			
+			// 2012 Jan 21  :  idx 1
+			events = [
+							new Obj_Event ( "5:30 pm" , "2nd Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "2 A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
+							, new Obj_Event ( "6:00 pm" , "2nd Cultural Show",  gIdx_pNorthCapitol , "2 A cutural SHow featuring Chinese songs and dances.")
+						];
+			gArr_event.push(events);
+
+			
+			// 2012 Jan 22  :  idx 2
+			events = [
+							new Obj_Event ( "6:30 pm" , "3rd Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "3 A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
+							, new Obj_Event ( "8:00 pm" , "3rd Cultural Show",  gIdx_pNorthCapitol , "3 A cutural SHow featuring Chinese songs and dances.")
 						];
 
 			gArr_event.push(events);
@@ -90,13 +169,13 @@
 
 
 		$(document).ready(function() {
-			init_vals();
 			init_Places();
 			init_Events();
 
 		});
 
 		$(document).on('pageinit', '#pSchedule', function() {
+			gObj_Event = new Obj_EventUI();
 			
 		});	
 
@@ -126,8 +205,37 @@
 
 
 	<div data-role="content">	
-		<p>Schedule</p>
 
+		<div> 
+			<div class="ui-grid-b">
+				<div class="ui-block-a">
+					<span>
+					<button data-mini="false" data-inline="true" data-icon="arrow-l"  data-theme="c" id="pScheLBtn">12</button>
+					</span>
+				</div>
+				<div class="ui-block-b">
+
+					<button data-rel="popup" data-role="button" data-mini="false" data-theme="a"  id="pScheCBtn">28 Oct</button>
+					<div data-role="popup" id="popupSelDate">
+						<ul data-role="listview" data-inset="true" data-theme="e">
+						</ul>
+					</div>
+
+				</div>
+				<div class="ui-block-c" style="text-align:right">
+					<span>
+						<button data-mini="false" data-inline="true" data-icon="arrow-r" data-iconpos="right" data-theme="c" id="pScheRBtn">29</button>
+					</span>
+				</div>
+			</div>
+		</div>
+			
+
+		
+		<ul data-role="listview" data-inset="true" data-theme="c" id="pScheList">
+		
+		</ul>
+		
 
 	</div><!-- /content -->
 
