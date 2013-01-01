@@ -65,9 +65,61 @@
 
 			, init : function(){
 
-				this.showList();
+				// Attach Events
+				this.$rBtn.on("click", { type : "R", objEUI : this }, this.clickArrowBtn);
+				this.$lBtn.on("click", { type : "L", objEUI : this }, this.clickArrowBtn);
 
-			} 
+				this.showList();
+				this.updateButtons( );
+
+			}
+
+			, updateButtons : function( ) {
+
+				var eDate = gArr_Date[this.idx];
+
+				var txtDate = eDate.getDate() + " " + gArr_sMonth[eDate.getMonth()];
+
+				this.$cBtn.text(txtDate).button('refresh');
+
+
+				// Set Left Button
+				if ( this.idx == 0 ) {
+					
+					// Hide Left Button
+					
+					this.$lBtn.parent().hide();
+				
+				} else {
+					
+					// Set Day on Left Button
+					
+					this.$lBtn.parent().show();
+
+					var d = gArr_Date[this.idx - 1];
+					this.$lBtn.text( d.getDate() ).button('refresh');
+
+				}
+
+				// Set Righ Button
+				if ( this.idx == gArr_Date.length - 1 ) {
+					
+					// Hide Right Button
+					
+					this.$rBtn.parent().hide();
+				
+				} else {
+					
+					// Set Day on Right Button
+					
+					this.$rBtn.parent().show();
+
+					var d = gArr_Date[this.idx + 1];
+					this.$rBtn.text( d.getDate() ).button('refresh');
+
+				}
+
+			} // updateButtons
 
 			, showList : function(){
 
@@ -91,8 +143,25 @@
 				}
 
 				this.$eList.html(txt).listview('refresh');
-			}
-		};
+			} // showList
+
+			, clickArrowBtn : function ( e ) {
+
+				var objEUI = e.data.objEUI;
+				var type = e.data.type;
+
+				if ( type === "R") {
+					objEUI.idx++;
+				} else {
+					objEUI.idx--;
+				}
+
+				objEUI.updateButtons();
+				objEUI.showList();
+ 
+			} // clickArrowBtn
+
+		}; 	// Obj_EventUI.prototype 
 
 /******************************************************************************************
 			Global Var
