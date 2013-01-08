@@ -4,6 +4,39 @@
 	<title>Bacoloadiat 2013</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.2.0.min.css" />
+	
+	<style type="text/css">
+
+		#pVE_title {
+			padding-bottom: 10px;
+			font-weight: bold;
+			text-align: center;
+			color: #00ccff;
+			font-size: 20px;
+		}
+
+		#pVE_time {
+			padding: 10px 0;
+			border-top: 1px solid #CCC;
+			border-bottom: 1px dashed #CCC;
+			color: #006600
+		}
+
+		#pVE_place {
+			padding: 10px 0;
+			border-bottom: 1px dashed #CCC;
+			color: #6666ff
+		}
+
+		#pVE_detail {
+			padding: 10px 0;
+			border-bottom: 1px solid #CCC;
+			color: #373737
+		}
+
+	</style>
+
+
 	<script src="js/jquery-1.8.2.min.js"></script>
 
 	<script>
@@ -68,6 +101,15 @@
 				// Attach Events
 				this.$rBtn.on("click", { type : "R", objEUI : this }, this.clickArrowBtn);
 				this.$lBtn.on("click", { type : "L", objEUI : this }, this.clickArrowBtn);
+
+				this.$eList.on("click", "a", { objEUI : this }, function( e ){
+				// Move to View Event Page
+
+					var di = e.data.objEUI.idx;   // Date Index
+					var ei = $(this).data("idx"); // Event Index from selected list item
+					gObj_ViewEvent = new Obj_ViewEvent( di , ei );
+
+				});		
 
 				this.showList();
 				this.updateButtons( );
@@ -136,7 +178,7 @@
 
 					var time_place = cEvt.time + " @ " + gArr_place[evts[i].place].name;
 
-					txt += '<li data-idx="' + this.idx + '" data-sidx="' + i + '" ><a>';
+					txt += '<li><a data-idx="' + i + '" href="viewEvent.html">';
 					txt += '<img src="img/star.png" class="ui-li-icon" />';
 					txt += '<h3 class="ui-li-heading">' + cEvt.title + '</h3>';
 					txt += '<p class="ui-li-desc">' + time_place + '</p></a></li>';
@@ -163,6 +205,40 @@
 
 		}; 	// Obj_EventUI.prototype 
 
+
+/****************************************************************
+			ViewEvent Object
+****************************************************************/
+		function Obj_ViewEvent( dIdx , eIdx ){  // dIdx : date Index, eIdx : event Index
+
+			this.di = dIdx;
+			this.ei = eIdx;
+
+		}
+
+		Obj_ViewEvent.prototype = {
+			constructor: Obj_ViewEvent
+
+			, showPage : function ( ) {
+				
+				var sEvt = gArr_event[this.di][this.ei];
+
+				var place = gArr_place[ sEvt.place ];
+
+				var eDate = gArr_Date[this.di];
+				var eDateTxt = gArr_sWeekDay[eDate.getDay()] + ", " + eDate.getDate() + " " + gArr_month[eDate.getMonth()] + ", " + eDate.getFullYear();
+
+				$("#pVE_title_txt").text( sEvt.title );
+				$("#pVE_time_txt").text( sEvt.time );
+				$("#pVE_date_txt").text( eDateTxt );
+				$("#pVE_place_txt").text( place.name );
+				$("#pVE_addr").text( place.addr );
+				$("#pVE_detail").text( sEvt.detail );
+
+			}
+		};
+
+
 /******************************************************************************************
 			Global Var
 *******************************************************************************************/
@@ -173,6 +249,7 @@
 		
 		// Objects
 		var gObj_Event;		// Main Event Object
+		var gObj_ViewEvent; // ViewEvent Object
 
 		// Index for Place
 		var gIdx_pNorthCapitol = 0;
@@ -245,8 +322,29 @@
 
 		$(document).on('pageinit', '#pSchedule', function() {
 			gObj_Event = new Obj_EventUI();
-			
+
+	
+			$("#pSchedule").on( "pageshow" , function( evt , ui ) {
+				// Check previous Page
+	
+				var prePage = ui.prevPage.attr("id");
+
+				if ( prePage == "pViewEvent") {
+
+					gObj_ViewEvent = null;
+				}
+
+			});
 		});	
+
+		$(document).on('pageinit', '#pViewEvent', function() {
+	
+			gObj_ViewEvent.showPage();	
+
+		});	
+
+
+
 
 	</script>
 
