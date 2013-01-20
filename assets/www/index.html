@@ -253,6 +253,11 @@
 
 		// Index for Place
 		var gIdx_pNorthCapitol = 0;
+		var gIdx_pBGC = 1;
+		var gIdx_pParade = 2;
+		var gIdx_pCokePNB = 3;
+		var gIdx_pCoke16th = 4;
+		var gIdx_pRobinson = 5;
 
 		
 		// Init Day & Month Array
@@ -269,38 +274,97 @@
 
 		function init_Places ( ) {
 			gArr_place = [
-							new Obj_Place( "North Capitol Road", "North Capitol Road", "", null)							
+							new Obj_Place( "North Capitol Road", "North Capitol Road", ["10.676887", "122.952062"], null)
+							
+							, new Obj_Place( "Bocolod Government Center", "BGC", ["10.676887", "122.966654"], null)
+							
+							, new Obj_Place( "22nd Street to North Capitol Road", "Parade Route", ["10.658671", "122.966654"], null)
+							
+							, new Obj_Place( "Coke Stage / PNB Lacson", "PNB Lacson", ["10.677282", "122.953762"], null)
+							
+							, new Obj_Place( "Coke Stage / 16th St. Lacson", "16th St. Lacson", ["10.680408", "122.955345"], null)
+
+							, new Obj_Place( "Robinson's Place Bacolod", "Lacson St. Mandalagan Bacolod City", ["10.691267", "122.95838"], null)
 						]; 
 		}
 
+
 		function init_Events () {
 			var year = 2013;
-			var month = 0;
-			gArr_Date = [ new Date(year, month, 20), new Date(year, month, 21), new Date(year, month, 22) ];
+			var month = 1;
+			gArr_Date = [ new Date(year, month, 7), new Date(year, month, 8) 
+							, new Date(year, month, 9), new Date(year, month, 10)];
 	
-			// 2012 Jan 20  :  idx 0
-			var events = [
-							new Obj_Event ( "4:30 pm" , "Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
-							, new Obj_Event ( "6:00 pm" , "Cultural Show",  gIdx_pNorthCapitol , "A cutural SHow featuring Chinese songs and dances.")
+			
+			// 2013 Feb 7
+			events = [
+							new Obj_Event ( "4:30PM" , "Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
+							
+							, new Obj_Event ( "6:00PM" , "Ceremonial Lighting Of Lanterns",  gIdx_pNorthCapitol , "")
+							
+							, new Obj_Event ( "6:00PM" , "KAPUSO NIGHT" , gIdx_pNorthCapitol , "" )
+							
+							, new Obj_Event ( "9:00PM" , "Symphony Of Lights & Sparks" , gIdx_pNorthCapitol , "" )
+							
+							, new Obj_Event ( "10:00PM" , "Tanduay Night - Live Band" , gIdx_pNorthCapitol , "" )
 						];
 			gArr_event.push(events);
 
 			
-			// 2012 Jan 21  :  idx 1
+			// 2013 Feb 8 
 			events = [
-							new Obj_Event ( "5:30 pm" , "2nd Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "2 A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
-							, new Obj_Event ( "6:00 pm" , "2nd Cultural Show",  gIdx_pNorthCapitol , "2 A cutural SHow featuring Chinese songs and dances.")
+							new Obj_Event ( "4:00PM" , "Chopsticks Alley" , gIdx_pNorthCapitol , "" )
+							
+							, new Obj_Event ( "4:30PM" , "Dazzling Grand Parade",  gIdx_pParade , "A colorful parade with floats, lanterns, lions and dragons.")
+							
+							, new Obj_Event ( "4:30PM" , "Street Lantern Dance Competition" , gIdx_pParade , "A blend of Chinese and Modern Street dance highlighted with the use of lanterns choreographed to various formations." )
+							
+							, new Obj_Event ( "5:00PM" , "Photography Contest" , gIdx_pCokePNB , "" )
+							
+							, new Obj_Event ( "6:00PM" , "Cultural Show" , gIdx_pNorthCapitol , "A Cultural Show featuring Chinese songs and dances." )
+							
+							, new Obj_Event ( "9:00PM" , "Symphony Of Lights & Sparks" , gIdx_pNorthCapitol , "" )
+
+							, new Obj_Event ( "9:30PM" , "Coke Night" , gIdx_pCokePNB , "" )
+
+							, new Obj_Event ( "9:30PM" , "Coke Night" , gIdx_pCoke16th , "" )
+							
+							, new Obj_Event ( "10:00PM" , "PureFoods Night - Live Band" , gIdx_pNorthCapitol , "" )
 						];
+
 			gArr_event.push(events);
 
-			
-			// 2012 Jan 22  :  idx 2
+			// 2013 Feb 9
 			events = [
-							new Obj_Event ( "6:30 pm" , "3rd Opening Of Chopsticks Alley" , gIdx_pNorthCapitol , "3 A food walk and night market with colorful booths of delicious Chinese food, souvenirs, arts and crafts with live performances nightly." )
-							, new Obj_Event ( "8:00 pm" , "3rd Cultural Show",  gIdx_pNorthCapitol , "3 A cutural SHow featuring Chinese songs and dances.")
+							new Obj_Event ( "2:00PM" , "Chopsticks Alley" , gIdx_pNorthCapitol , "" )
+							
+							, new Obj_Event ( "4:00PM" , "Parade Of Mascots",  gIdx_pParade , "Lots of photo opportunities as different mascots walk around Lacson St.")
+							
+							, new Obj_Event ( "4:30PM" , "Longest Human Snake Attempt For Guinness Book Of Records",  gIdx_pParade , "Featuring the longest human snake winding its way along Lacson Street")
+							
+							, new Obj_Event ( "6:00PM" , "Lantern Dance Competition" , gIdx_pNorthCapitol , "" )
+
+
+							, new Obj_Event ( "9:00PM" , "Unilever Night - Live Band" , gIdx_pNorthCapitol , "" )
+							
+							, new Obj_Event ( "11:30PM" , "Symphony Of Lights & Sparks" , gIdx_pNorthCapitol , "" )
 						];
 
 			gArr_event.push(events);
+
+			// 2013 Feb 10
+			events = [
+							new Obj_Event ( "3:00PM" , "Chinies Cuisine Culinary Contest" , gIdx_pRobinson , "" )
+
+							, new Obj_Event ( "5:30PM" , "ABS-CBN Culinary Contest",  gIdx_pBGC , "")
+							
+							, new Obj_Event ( "8:30PM" , "Symphony Of Lights & Sparks",  gIdx_pBGC , "")
+							
+							, new Obj_Event ( "10:30PM" , "Sponsor Night - Live Band" , gIdx_pBGC , "" )
+						];
+
+			gArr_event.push(events);
+
 
 		}
 
