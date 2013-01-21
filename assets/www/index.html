@@ -37,6 +37,8 @@
 	</style>
 
 
+	<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCI0GG4U1L9Kq4_7ZDPL7qjJcyq2j7xXuY&sensor=false"></script>
+
 	<script src="js/jquery-1.8.2.min.js"></script>
 
 	<script>
@@ -97,7 +99,7 @@
 			constructor: Obj_EventUI
 
 			, init : function(){
-
+				
 				// Attach Events
 				this.$rBtn.on("click", { type : "R", objEUI : this }, this.clickArrowBtn);
 				this.$lBtn.on("click", { type : "L", objEUI : this }, this.clickArrowBtn);
@@ -212,12 +214,23 @@
 		function Obj_ViewEvent( dIdx , eIdx ){  // dIdx : date Index, eIdx : event Index
 
 			this.di = dIdx;
-			this.ei = eIdx;
+			this.ei = eIdx;					
 
 		}
 
 		Obj_ViewEvent.prototype = {
 			constructor: Obj_ViewEvent
+
+			, attachEvt : function ( ) {
+				// Attach Event
+				$("#pVE_mapImg").on("click", { pi : gArr_event[this.di][this.ei].place }, function ( e ) {					
+
+					// go to the Map Page
+					gObj_Map = new Obj_Map( e.data.pi );
+					gObj_Map.moveToMap();
+
+				});
+			}
 
 			, showPage : function ( ) {
 				
@@ -239,6 +252,61 @@
 		};
 
 
+
+/****************************************************************
+			Map Object
+****************************************************************/
+		function Obj_Map ( pIdx ) {  
+		
+			this.pi = pIdx;
+		
+		}
+
+		Obj_Map.prototype = {
+			constructor: Obj_Map
+
+			// Go to Map Page
+			, moveToMap : function ( ) {
+				$.mobile.changePage("map.html");
+			}
+
+			, setMapHeight : function(){
+				var headerH = $("#pMapHeader").css("height");
+				var height = $(window).height() - parseInt(headerH, 10) - 30; //Border
+
+				height += "px";
+				$("#googleMap").css("height", height);
+	
+			}
+
+			// Draw Google Map
+			, showMap : function ( idx , type ) {
+				
+				this.setMapHeight();
+
+				var place = gArr_place[ this.pi ];
+
+				var pCenter = new google.maps.LatLng( place.latlng[0] , place.latlng[1]);
+
+				var mapProp = {
+					center: pCenter,
+					zoom:16,
+					mapTypeControl:true,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
+				var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+
+				var marker = new google.maps.Marker({
+					position:pCenter,
+				});
+				marker.setMap(map);
+			}
+
+		};
+
+
+
 /******************************************************************************************
 			Global Var
 *******************************************************************************************/
@@ -250,6 +318,7 @@
 		// Objects
 		var gObj_Event;		// Main Event Object
 		var gObj_ViewEvent; // ViewEvent Object
+		var gObj_Map;		// Map Object
 
 		// Index for Place
 		var gIdx_pNorthCapitol = 0;
@@ -276,13 +345,13 @@
 			gArr_place = [
 							new Obj_Place( "North Capitol Road", "North Capitol Road", ["10.676887", "122.952062"], null)
 							
-							, new Obj_Place( "Bocolod Government Center", "BGC", ["10.676887", "122.966654"], null)
+							, new Obj_Place( "Bocolod Government Center", "BGC", ["10.659332", "122.965663"], null)
 							
 							, new Obj_Place( "22nd Street to North Capitol Road", "Parade Route", ["10.658671", "122.966654"], null)
 							
-							, new Obj_Place( "Coke Stage / PNB Lacson", "PNB Lacson", ["10.677282", "122.953762"], null)
+							, new Obj_Place( "Coke Stage / PNB Lacson", "PNB Lacson", ["10.677295", "122.953341"], null)
 							
-							, new Obj_Place( "Coke Stage / 16th St. Lacson", "16th St. Lacson", ["10.680408", "122.955345"], null)
+							, new Obj_Place( "Coke Stage / 16th St. Lacson", "16th St. Lacson", ["10.680414", "122.954838"], null)
 
 							, new Obj_Place( "Robinson's Place Bacolod", "Lacson St. Mandalagan Bacolod City", ["10.691267", "122.95838"], null)
 						]; 
@@ -373,8 +442,9 @@
 			
 *******************************************************************************************/
 		$(document).on('mobileinit', function() {
-			$.mobile.defaultPageTransition = "none";
 			
+			$.mobile.defaultPageTransition = "none";
+
 		});
 
 
@@ -385,6 +455,7 @@
 		});
 
 		$(document).on('pageinit', '#pSchedule', function() {
+
 			gObj_Event = new Obj_EventUI();
 
 	
@@ -402,13 +473,27 @@
 		});	
 
 		$(document).on('pageinit', '#pViewEvent', function() {
-	
+			gObj_ViewEvent.attachEvt();
 			gObj_ViewEvent.showPage();	
 
 		});	
 
+		$(document).on('pageinit', '#pMap', function() {
 
+			
+		});	
 
+		$(document).on('pageshow', '#pMap', function() {
+		
+			gObj_Map.showMap();
+			
+		});	
+
+		$(document).on('pagehide', '#pMap', function() {
+		
+			gObj_Map = null;
+			
+		});	
 
 	</script>
 
