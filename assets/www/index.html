@@ -75,6 +75,78 @@
 
 
 /****************************************************************
+			Place List Object
+****************************************************************/
+		function Obj_Place_List( ){
+			
+			//this.$pList = $c_Venue.children('ul');
+			
+			//this.init_evtListByPlace();
+			//this.create_pList();
+
+			this.createList();
+		}
+
+		Obj_Place_List.prototype = {
+			constructor: Obj_Place_List
+
+			, createList : function ( ) { // Create Place List
+				// Set evtListByPlace
+				gArr_eventByPlace = [];
+
+				var i, j;
+				var pLen = gArr_place.length;
+
+				for ( i = 0; i < pLen; i++ ) {
+					gArr_eventByPlace.push([]);
+				}
+
+				// Separate Events by Place
+				for ( i = 0; i < gArr_Date.length; i++ ) {
+					
+					var evts = gArr_event[i];
+					
+					for ( j = 0; j < evts.length ; j++ ) {
+						var evt = evts[j];
+						
+						gArr_eventByPlace[evt.place].push( [ i , j ] );
+
+					}
+
+				}
+
+
+				// Create List on Page
+
+				var $pList = $("#pVenueList");  // Venue List
+				var pListHtml = '';
+
+
+				for ( i = 0; i < pLen; i++ ) {
+					var p = gArr_place[i];
+					var eCnt = gArr_eventByPlace[i].length;
+
+					var txtEvt = ( ( eCnt > 1 ) ?  eCnt + " Events" : eCnt + " Event" );
+
+					pListHtml += '<li data-idx="' + i + '"><img src="img/v' + i + '.png" />';
+					pListHtml += '<h3 class="ui-li-heading">' + p.name + '</h3>';
+					pListHtml += '<p class="ui-li-desc">';
+					pListHtml += '<div class="ui-grid-a"><div class="ui-block-a">';				
+					pListHtml += '<button type="button" data-bType="event" data-mini="true" data-inline="true" data-icon="info" data-theme="d">' +  txtEvt + '</button></div>';
+					pListHtml += '<div class="ui-block-b"><button type="button" data-bType="map" data-mini="true" data-inline="true" data-icon="search" data-theme="e">Map</button></div></div></p></li>';
+				}
+				
+				$pList.html(pListHtml).listview('refresh');
+				
+				var $pList_Button = $pList.find("button");				
+				$pList_Button.button().button('refresh');
+
+			} // end : createList
+
+		};
+
+
+/****************************************************************
 			Event UI Object
 ****************************************************************/
 		function Obj_EventUI ( ) {
@@ -314,6 +386,7 @@
 		var gArr_place;		// For Places
 		var gArr_Date;		// For Dates for Events
 		var gArr_event = [];		// For Events
+		var gArr_eventByPlace;	// For Events by Place
 		
 		// Objects
 		var gObj_Event;		// Main Event Object
@@ -470,7 +543,14 @@
 				}
 
 			});
-		});	
+		});
+
+		$(document).on('pageinit', '#pVenues', function() {
+
+			var objPL = new Obj_Place_List();
+
+		});
+
 
 		$(document).on('pageinit', '#pViewEvent', function() {
 			gObj_ViewEvent.attachEvt();
@@ -577,7 +657,11 @@
 
 
 	<div data-role="content">	
-		<p>Venues</p>		
+		
+		<ul data-role="listview" data-inset="true" data-theme="c" id="pVenueList">
+		
+		</ul>
+
 	</div><!-- /content -->
 
 </div><!-- /page -->
