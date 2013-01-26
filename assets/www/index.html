@@ -141,6 +141,22 @@
 				var $pList_Button = $pList.find("button");				
 				$pList_Button.button().button('refresh');
 
+				// Attach Events to Buttons
+				$pList_Button.on( "click", function() {
+					var $this = $(this);
+					var idx = $this.closest("li").data("idx");
+
+					if( $this.attr("data-bType") == "map" ) {
+					// Open Map Window
+						goToMap( idx );
+
+					} else {
+						// Show Event List by Place
+						alert("Event" + idx);
+					}
+				});
+
+
 			} // end : createList
 
 		};
@@ -298,8 +314,7 @@
 				$("#pVE_mapImg").on("click", { pi : gArr_event[this.di][this.ei].place }, function ( e ) {					
 
 					// go to the Map Page
-					gObj_Map = new Obj_Map( e.data.pi );
-					gObj_Map.moveToMap();
+					goToMap( e.data.pi );
 
 				});
 			}
@@ -409,6 +424,16 @@
 		var	gArr_sMonth = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 
+
+/******************************************************************************************
+			Util Functions
+*******************************************************************************************/
+
+		function goToMap ( pi ) {
+			// go to the Map Page
+			gObj_Map = new Obj_Map( pi );
+			gObj_Map.moveToMap();
+		}
 
 /******************************************************************************************
 			Init Functions
