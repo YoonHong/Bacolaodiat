@@ -79,11 +79,6 @@
 ****************************************************************/
 		function Obj_Place_List( ){
 			
-			//this.$pList = $c_Venue.children('ul');
-			
-			//this.init_evtListByPlace();
-			//this.create_pList();
-
 			this.createList();
 		}
 
@@ -91,9 +86,7 @@
 			constructor: Obj_Place_List
 
 			, createList : function ( ) { // Create Place List
-				// Set evtListByPlace
-				gArr_eventByPlace = [];
-
+				
 				var i, j;
 				var pLen = gArr_place.length;
 
@@ -137,12 +130,12 @@
 				}
 				
 				$pList.html(pListHtml).listview('refresh');
-				
-				var $pList_Button = $pList.find("button");				
-				$pList_Button.button().button('refresh');
+
+				var $button = $pList.find("button");
+				$button.button().button('refresh');
 
 				// Attach Events to Buttons
-				$pList_Button.on( "click", function() {
+				$pList.on( "click", "button", function() {
 					var $this = $(this);
 					var idx = $this.closest("li").data("idx");
 
@@ -152,15 +145,104 @@
 
 					} else {
 						// Show Event List by Place
-						alert("Event" + idx);
+						gObj_EListByPlace.goToList( idx );
 					}
-				});
 
+				});
 
 			} // end : createList
 
 		};
 
+
+/****************************************************************
+			Event List by Place Object
+****************************************************************/
+		function Obj_EList_By_Place ( ) {
+			this.pi;  // Index for Place
+		}
+
+		Obj_EList_By_Place.prototype = {
+			constructor: Obj_EList_By_Place
+
+			, goToList : function ( pIdx ) {
+
+				this.pi = pIdx;  // Set pi to selected Place Index
+
+				$.mobile.changePage("evtByPlace.html"); // Move to List Page
+			}
+
+			, showList : function ( ) {
+				var id = this.pi;
+				var place = gArr_place[id];
+				var list = gArr_eventByPlace[id];
+
+				// Set Place Name as a Title
+				$("#pELP_Title").text( place.name );		
+
+				var $content = $("#pELP_Content");
+
+				var divider = -1;  // Divide Date 
+				var i, txt = "";
+
+				for( i = 0; i < list.length; i++ ){
+
+					var di = list[i][0];  // Index for Date
+					var ei = list[i][1];  // Index for Event
+
+
+					if ( di != divider ) {  // Header for Date
+
+						if ( i != 0 ) {
+							// Close previous div and ul
+							txt += '</ul></div>';
+						}
+
+						divider = di;
+
+						var d = gArr_Date[di]; // Selected Date in For Loop
+						var today = gArr_weekDay[ d.getDay() ] + " " + d.getDate() + " " + gArr_month[d.getMonth()] + " " + d.getFullYear();
+
+						txt += '<div  data-role="collapsible"  data-collapsed="false" data-mini="true">';
+						txt += '<h3>' + today + '</h3>';
+						txt += '<ul data-role="listview" data-mini="true" data-inset="true" data-theme="c">'
+
+					}
+
+					// Insert Event Content
+					var evt = gArr_event[di][ei];
+					
+					txt += '<li><a data-di="' + di + '" data-ei="' + ei + '" href="viewEvent.html">';
+					txt += '<img src="img/star.png" class="ui-li-icon" />';
+					txt += '<h3 class="ui-li-heading">' + evt.title + '</h3>';
+					txt += '<p class="ui-li-desc">' + evt.time + '</p></a></li>';
+
+				}
+
+				$content.html(txt);
+
+				$content.find("ul").listview().listview('refresh');
+				$content.find('div[data-role=collapsible]').collapsible({theme:'b',refresh:true}); 
+
+
+				// Attatch Event
+				$content.on("click", "a", function( ){
+					// Move to View Event Page
+					$this = $(this);
+					var di = $this.data("di");   // Date Index
+					var ei = $this.data("ei"); // Event Index from selected list item
+					gObj_ViewEvent.setIdx( di, ei );
+					
+				});		
+
+				$("#pELP__Map").on("click", { pi : id }, function( e ) {
+					// Open Map Window
+					goToMap( e.data.pi );
+				});
+
+			}
+
+		}
 
 /****************************************************************
 			Event UI Object
@@ -299,10 +381,10 @@
 /****************************************************************
 			ViewEvent Object
 ****************************************************************/
-		function Obj_ViewEvent( dIdx , eIdx ){  // dIdx : date Index, eIdx : event Index
+		function Obj_ViewEvent( ){  
 
-			this.di = dIdx;
-			this.ei = eIdx;					
+			this.di;	// Index for Date
+			this.ei;	// Index for Event
 
 		}
 
@@ -319,7 +401,7 @@
 				});
 			}
 
-			, setIdx : function ( dIdx , eIdx ) {
+			, setIdx : function ( dIdx , eIdx ) {  // dIdx : date Index, eIdx : event Index
 
 				this.di = dIdx;
 				this.ei = eIdx;	
@@ -407,12 +489,13 @@
 		var gArr_place;		// For Places
 		var gArr_Date;		// For Dates for Events
 		var gArr_event = [];		// For Events
-		var gArr_eventByPlace;	// For Events by Place
+		var gArr_eventByPlace = [];	// For Events by Place
 		
 		// Objects
 		var gObj_Event;		// Main Event Object
 		var gObj_ViewEvent; // ViewEvent Object
 		var gObj_Map;		// Map Object
+		var gObj_EListByPlace // Event List by Place Object
 
 		// Index for Place
 		var gIdx_pNorthCapitol = 0;
@@ -544,7 +627,8 @@
 
 		function init_GlobalObj() {
 			
-			gObj_ViewEvent = new Obj_ViewEvent( -1 , -1 );
+			gObj_ViewEvent = new Obj_ViewEvent( );
+			gObj_EListByPlace = new Obj_EList_By_Place();
 		}
 
 /******************************************************************************************
@@ -598,6 +682,13 @@
 			gObj_Map = null;
 			
 		});	
+
+		$(document).on('pageinit', '#pEvtListByPlace', function() {
+			
+			gObj_EListByPlace.showList();
+
+		});	
+
 
 	</script>
 
