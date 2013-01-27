@@ -197,8 +197,8 @@
 
 					var di = e.data.objEUI.idx;   // Date Index
 					var ei = $(this).data("idx"); // Event Index from selected list item
-					gObj_ViewEvent = new Obj_ViewEvent( di , ei );
-
+					gObj_ViewEvent.setIdx( di, ei );
+					
 				});		
 
 				this.showList();
@@ -317,6 +317,12 @@
 					goToMap( e.data.pi );
 
 				});
+			}
+
+			, setIdx : function ( dIdx , eIdx ) {
+
+				this.di = dIdx;
+				this.ei = eIdx;	
 			}
 
 			, showPage : function ( ) {
@@ -536,6 +542,11 @@
 		}
 
 
+		function init_GlobalObj() {
+			
+			gObj_ViewEvent = new Obj_ViewEvent( -1 , -1 );
+		}
+
 /******************************************************************************************
 			
 *******************************************************************************************/
@@ -549,25 +560,13 @@
 		$(document).ready(function() {
 			init_Places();
 			init_Events();
-
+			init_GlobalObj();
 		});
 
 		$(document).on('pageinit', '#pSchedule', function() {
 
 			gObj_Event = new Obj_EventUI();
 
-	
-			$("#pSchedule").on( "pageshow" , function( evt , ui ) {
-				// Check previous Page
-	
-				var prePage = ui.prevPage.attr("id");
-
-				if ( prePage == "pViewEvent") {
-
-					gObj_ViewEvent = null;
-				}
-
-			});
 		});
 
 		$(document).on('pageinit', '#pVenues', function() {
